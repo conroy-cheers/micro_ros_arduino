@@ -19,6 +19,7 @@ if [ $OPTIND -eq 1 ]; then
     # PLATFORMS+=("portenta-m4")
     PLATFORMS+=("portenta-m7")
     PLATFORMS+=("B-G431B-ESC1")
+    PLATFORMS+=("kakutef7-m7")
 fi
 
 shift $((OPTIND-1))
@@ -77,7 +78,7 @@ fi
 if [[ " ${PLATFORMS[@]} " =~ " cortex_m0 " ]]; then
     rm -rf firmware/build
 
-    export TOOLCHAIN_PREFIX=/uros_ws/gcc-arm-none-eabi-5_4-2016q3/bin/arm-none-eabi-
+    export TOOLCHAIN_PREFIX=/uros_ws/gcc-arm-none-eabi-7-2017-q4-major/bin/arm-none-eabi-
     ros2 run micro_ros_setup build_firmware.sh /project/extras/library_generation/cortex_m0_toolchain.cmake /project/extras/library_generation/colcon_verylowmem.meta
 
     find firmware/build/include/ -name "*.c"  -delete
@@ -183,6 +184,20 @@ if [[ " ${PLATFORMS[@]} " =~ " B-G431B-ESC1 " ]]; then
 
     mkdir -p /project/src/cortex-m4/fpv4-sp-d16-hard
     cp -R firmware/build/libmicroros.a /project/src/cortex-m4/fpv4-sp-d16-hard/libmicroros.a
+fi
+
+######## Build for Kakute F7 M7 core  ########
+if [[ " ${PLATFORMS[@]} " =~ " kakutef7-m7 " ]]; then
+    rm -rf firmware/build
+
+    export TOOLCHAIN_PREFIX=/uros_ws/gcc-arm-none-eabi-9-2020-q2-update/bin/arm-none-eabi-
+    ros2 run micro_ros_setup build_firmware.sh /project/extras/library_generation/kakutef7-m7_toolchain.cmake /project/extras/library_generation/colcon.meta
+
+    find firmware/build/include/ -name "*.c"  -delete
+    cp -R firmware/build/include/* /project/src/
+
+    mkdir -p /project/src/cortex-m7/fpv5-sp-d16-hardfp
+    cp -R firmware/build/libmicroros.a /project/src/cortex-m7/fpv5-sp-d16-hardfp/libmicroros.a
 fi
 
 ######## Generate extra files ########
